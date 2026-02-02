@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GemiFormula AI PRO - Ultimate</title>
+    <title>BakChemformula AI PRO</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -17,21 +17,14 @@
                 <button onclick="setLang('ar')">العربية</button> | 
                 <button onclick="setLang('en')">English</button>
             </div>
-            <h1 id="txt-title">المنظم الصيدلاني الذكي PRO</h1>
-            <p id="txt-subtitle">النظام الخبير لتطوير الصيغ وحماية البيانات</p>
+            <h1 id="txt-title">نظام BakChemformula الذكي</h1>
+            <p id="txt-subtitle">المساعد الرقمي لخبراء الكيمياء والصيدلة</p>
         </header>
 
         <section class="card input-section">
             <div class="grid-inputs">
                 <div class="field">
-                    <label id="lbl-form">الشكل الصيدلاني:</label>
-                    <select id="dosageForm">
-                        <option value="tablet">أقراص (Tablets)</option>
-                        <option value="capsule">كبسولات (Capsules)</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label id="lbl-api">المادة الفعالة (API):</label>
+                    <label id="lbl-api">المادة الأساسية / API:</label>
                     <select id="apiSelect">
                         <option value="Paracetamol">Paracetamol</option>
                         <option value="Metronidazole">Metronidazole</option>
@@ -48,45 +41,38 @@
                     </select>
                 </div>
                 <div class="field">
-                    <label id="lbl-batch">حجم التشغيلة (الوحدات):</label>
+                    <label id="lbl-batch">حجم التشغيلة (Batch Size):</label>
                     <input type="number" id="batchSize" value="10000">
                 </div>
             </div>
-            <button onclick="calculateAll()" class="btn-main" id="btn-run">تحليل واقتراح التركيبة المثلى</button>
+            <button onclick="calculateAll()" class="btn-main" id="btn-run">تحليل واقتراح الصيغة</button>
         </section>
 
         <div id="resultsArea" style="display:none;">
-            <div class="card efficiency-card">
-                 <div id="efficiencyWrapper"></div>
-            </div>
-
-            <div class="main-results-grid">
-                <div class="card primary-card">
-                    <h3 id="txt-formula-title">تفاصيل التركيبة المختارة</h3>
+            <div class="card main-results-grid">
+                <div>
+                    <h3 id="txt-formula-title">تفاصيل تركيبة BakChem</h3>
                     <table>
                         <thead><tr id="table-head"></tr></thead>
                         <tbody id="formulaBody"></tbody>
                     </table>
                 </div>
-                <div class="card chart-card">
-                    <h3 id="txt-chart-title">توزيع المكونات</h3>
-                    <div class="chart-container">
-                        <canvas id="formulaChart"></canvas>
-                    </div>
+                <div class="chart-container">
+                    <canvas id="formulaChart"></canvas>
                 </div>
             </div>
 
-            <div class="card cost-compare-card">
-                <h3 id="txt-cost-compare">تحليل مقارنة التكاليف</h3>
+            <div class="card">
+                <h3 id="txt-cost-compare">مقارنة التكاليف والجدوى</h3>
                 <div class="chart-bar-container">
                     <canvas id="costComparisonChart"></canvas>
                 </div>
-                <button onclick="generatePDF()" class="btn-pdf" id="btn-pdf">تحميل التقرير المحمي (PDF)</button>
+                <button onclick="generatePDF()" class="btn-pdf">تحميل تقرير BakChem المحمي (PDF)</button>
             </div>
         </div>
 
         <footer>
-            <p id="footer-text">&copy; 2026 GemiFormula AI. جميع الحقوق محفوظة قانونياً.</p>
+            <p id="footer-text">&copy; 2026 BakChemformula AI. جميع الحقوق محفوظة لـ babuker.github.io</p>
             <div style="display:none;"><canvas id="barcodeCanvas"></canvas></div>
         </footer>
     </div>
