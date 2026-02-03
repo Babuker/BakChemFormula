@@ -1,36 +1,25 @@
 🧪 BakChemformula
-Pharmaceutical Expert System for In-silico Formulation
-نظام خبير صيدلاني لأتمتة تصميم الصيغ الدوائية (Pre-formulation) وتقليل تجارب الخطأ والصواب (Trial & Error) بنسبة تقديرية تصل إلى 40%.
+In-silico Pharmaceutical Expert System
 
-🚀 الميزات الرئيسية (Core Features)
-Deterministic Calculation: موازنة كتلة دقيقة للمكونات (Mass Balance).
+نظام ذكي لأتمتة تصميم الصيغ الدوائية (Formulation Design) وتقليل الهدر في مرحلة البحث والتطوير.
 
-Inference Engine: محرك استدلال لاختيار المواد المضافة بناءً على الخصائص الكيميائية للـ API.
+🌟 الميزات (Highlights)
+Q1/Q2 Compliance: مطابقة معايير FDA النوعية والكمية.
 
-Q1/Q2 Compliance: تقييم المطابقة النوعية والكمية حسب معايير منظمة الغذاء والدواء (FDA).
+Smart Engine: اختيار تلقائي للمواد المضافة بناءً على خصائص الـ API.
 
-Documentation: توليد تقارير PDF فنية مزودة بباركود تتبع فريد.
+Deterministic Math: حساب دقيق لموازنة الكتلة (Mass Balance).
 
-🔬 المنهجية العلمية (Methodology)
-يعتمد النظام في خوارزمياته على المراجع الدستورية العالمية:
+Technical PDF: توليد تقارير موثقة بباركود تتبع.
 
-Handbook of Pharmaceutical Excipients (لأدوار المواد المضافة).
+📚 المراجع (References)
+USP-NF Standard Monographs.
 
-USP-NF Standard Monographs (للتسميات والمعايير المعملية).
+Handbook of Pharmaceutical Excipients.
 
-FDA Inactive Ingredient Database (لحدود الأمان).
+FDA Inactive Ingredient Database.
 
-🛠 التكنولوجيا المستخدمة (Tech Stack)
-Logic: JavaScript (Rule-Based Engine).
+🛠 التقنيات (Tech)
+JavaScript Chart.js jsPDF HTML/CSS
 
-UI: HTML5 / CSS3 (Responsive Design).
-
-Analytics: Chart.js (Data Visualization).
-
-Reporting: jsPDF / JsBarcode.
-
-Developed by: [Babuker]
-
-Category: Digital Transformation in Pharma (Pharma 4.0)
-
-💡 كيف ترفعه؟
+By: [Babuker] | Pharma 4.0 Edition
