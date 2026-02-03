@@ -9,3 +9,24 @@ BakChemformula هو نظام خبير مدعوم بالذكاء الاصطناع
 📧 Email: babuker@protonmail.com
 
 💼 LinkedIn: Abubaker A. A.
+
+🛠 Tech Stack / التقنيات المستخدمة
+Logic: JavaScript (Expert System Algorithms).
+
+Visuals: Chart.js & JsBarcode.
+
+PDF Engine: jsPDF & AutoTable.
+
+UI/UX: Responsive HTML5 & CSS3.
+
+💡 How to use / طريقة الاستخدام
+Input: Select the Active API and set the Batch Size.
+
+Strategy: Choose between Quality, Hybrid (Balanced), or Economy.
+
+Monitor: Check the Efficiency Index and QbD Risk Analysis.
+
+Report: Export the final Certified Technical PDF.
+
+⚖️ Legal Note / ملاحظة قانونية
+This system is registered under property ID: BK-2026-X56. All calculations are based on 2026 global pharmaceutical raw material market estimates.
