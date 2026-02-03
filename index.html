@@ -1,173 +1,197 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="mainHtml">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BakChemformula | Professional Edition</title>
+    <title>BakChemformula | Professional Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
-        :root { --primary: #0e4b62; --secondary: #3498db; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: #333; }
-        .container { max-width: 1000px; margin: 20px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .header { text-align: center; border-bottom: 3px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        .btn-main { background: var(--primary); color: white; cursor: pointer; font-weight: bold; transition: 0.3s; border: none; }
-        .btn-main:hover { background: #083242; }
-        #resultsArea { display: none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #eee; padding: 12px; text-align: center; }
+        :root { --primary: #0e4b62; --secondary: #3498db; --accent: #27ae60; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 25px; padding-bottom: 10px; }
+        .input-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; background: #f1f4f6; padding: 20px; border-radius: 10px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: var(--primary); }
+        select, input, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; margin-bottom: 10px; }
+        .btn-run { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; font-size: 18px; }
+        .btn-run:hover { background: #083242; }
+        
+        /* شريط الجودة والتكلفة */
+        .status-card { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 10px; }
+        .progress-container { background: #eee; height: 15px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
+        .quality-fill { background: var(--accent); }
+        .cost-fill { background: #e67e22; }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; display: none; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background: var(--primary); color: white; }
-        .progress-bar { background: #eee; height: 10px; border-radius: 5px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s; }
-        canvas { max-width: 100%; height: auto !important; }
+        .recommendation-box { background: #e8f4fd; padding: 15px; border-right: 5px solid var(--secondary); border-radius: 5px; margin-top: 15px; }
+        canvas { max-width: 100%; height: 250px !important; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>BakChemformula <span style="font-size: 0.5em; color: var(--secondary);">Scientific Expert System</span></h1>
-        <p>Deterministic Calculation Module for Pharmaceutical Design</p>
+        <h1>BakChemformula <span style="font-size: 0.4em; vertical-align: middle;">Expert System v2.5</span></h1>
+        <p>النظام الخبير لتصميم وتحليل الصيغ الصيدلانية والمطابقة المعيارية</p>
     </div>
 
-    <div class="grid">
+    <div class="input-section">
         <div>
-            <label>المادة الفعالة (API Selection):</label>
+            <label>المادة الفعالة (API):</label>
             <select id="apiSelect">
-                <option value="Paracetamol">Paracetamol (Standard)</option>
+                <option value="Paracetamol">Paracetamol (Analgesic)</option>
                 <option value="Diclofenac">Diclofenac (Acid Sensitive)</option>
-                <option value="Metronidazole">Metronidazole (Moisture Sensitive)</option>
-                <option value="Ibuprofen">Ibuprofen (Poor Flow)</option>
+                <option value="Metronidazole">Metronidazole (Bitter/Moisture)</option>
             </select>
-
-            <label>حجم التشغيلة (Units per Batch):</label>
-            <input type="number" id="batchSize" value="1000" min="1">
+            <label>حجم التشغيلة (Batch Units):</label>
+            <input type="number" id="batchSize" value="1000">
         </div>
         <div>
-            <label>استراتيجية التحسين (Optimization Strategy):</label>
+            <label>إستراتيجية التصنيع:</label>
             <select id="strategy">
-                <option value="quality">Q1/Q2 Compliance (Premium)</option>
-                <option value="cost">Cost Optimization (Economic)</option>
+                <option value="quality">جودة عالية (Q1/Q2 Compliance)</option>
+                <option value="balanced">متوازن (Performance & Cost)</option>
+                <option value="cost">تكلفة اقتصادية (Budget Friendly)</option>
             </select>
-            <button class="btn-main" onclick="calculateAll()">تحليل وتصميم الصيغة</button>
+            <button class="btn-run" onclick="calculateBakChem()">تحليل واعتماد الصيغة</button>
         </div>
     </div>
 
-    <div id="resultsArea">
-        <div id="efficiencyWrapper"></div>
-        <table>
-            <thead>
-                <tr id="table-head">
-                    <th>المادة</th><th>الوظيفة</th><th>(mg) الكمية</th><th>النسبة %</th><th>التكلفة</th>
-                </tr>
-            </thead>
-            <tbody id="formulaBody"></tbody>
-        </table>
-        
-        <div style="margin-top: 20px; height: 300px;">
-            <canvas id="formulaChart"></canvas>
+    <div id="resultsArea" class="results-grid">
+        <div class="right-panel">
+            <div class="status-card">
+                <label>مؤشر مطابقة الجودة (Quality Index):</label>
+                <div class="progress-container"><div id="qualityBar" class="progress-fill quality-fill"></div></div>
+                
+                <label>مقارنة التكلفة (Cost Optimization):</label>
+                <div class="progress-container"><div id="costBar" class="progress-fill cost-fill"></div></div>
+            </div>
+
+            <table>
+                <thead><tr><th>المادة</th><th>(mg)</th><th>النسبة</th><th>التكلفة</th></tr></thead>
+                <tbody id="formulaTable"></tbody>
+            </table>
         </div>
-        
-        <button class="btn-main" style="background: #27ae60; margin-top: 20px;" onclick="generatePDF()">تحميل تقرير المطابقة (PDF)</button>
+
+        <div class="left-panel">
+            <div class="recommendation-box" id="techBox"></div>
+            <div class="recommendation-box" style="background:#fdf2e9; border-color:#e67e22" id="storageBox"></div>
+            <canvas id="formulaChart"></canvas>
+            <button class="btn-run" style="background:var(--accent); margin-top:10px;" onclick="exportPDF()">تصدير التقرير الفني المعتمد (PDF)</button>
+        </div>
     </div>
 </div>
 
-<canvas id="barcodeCanvas" style="display:none;"></canvas>
+<canvas id="barcode" style="display:none"></canvas>
 
 <script>
-const apiDb = {
-    "Paracetamol": { dose: 500, cost: 14.5 },
-    "Diclofenac": { dose: 50, cost: 82.0, acidSensitive: true },
-    "Metronidazole": { dose: 500, cost: 38.0, moistureSensitive: true },
-    "Ibuprofen": { dose: 200, cost: 26.0 }
+const db = {
+    "Paracetamol": { dose: 500, cost: 14.5, solubility: "Low", sensitivity: "None" },
+    "Diclofenac": { dose: 50, cost: 82.0, solubility: "Low", sensitivity: "Acid" },
+    "Metronidazole": { dose: 500, cost: 38.0, solubility: "Medium", sensitivity: "Moisture" }
 };
 
-const excipients = {
-    fillers: [
-        { name: "Avicel PH-102", role: "Filler/Binder", cost: 8.5 },
-        { name: "DCP (Anhydrous)", role: "Filler", cost: 5.8 }
-    ],
-    disintegrants: [
-        { name: "Ac-Di-Sol", role: "Superdisintegrant", cost: 15.0 },
-        { name: "Primojel", role: "Disintegrant", cost: 9.5 }
-    ],
-    lubricants: { name: "Magnesium Stearate", role: "Lubricant", cost: 12.0 }
-};
+let myChart = null;
 
-let formulaChart = null;
-
-function calculateAll() {
-    const apiName = document.getElementById('apiSelect').value;
-    const batchSize = parseInt(document.getElementById('batchSize').value);
+function calculateBakChem() {
+    const api = db[document.getElementById('apiSelect').value];
     const strategy = document.getElementById('strategy').value;
-    const api = apiDb[apiName];
+    const batch = parseInt(document.getElementById('batchSize').value);
 
-    // Rule-Based Inference Engine
-    let filler = api.acidSensitive ? excipients.fillers[1] : excipients.fillers[0];
-    let dis = strategy === "quality" ? excipients.disintegrants[0] : excipients.disintegrants[1];
+    // منطق الاستراتيجيات
+    let qualityScore, costScore, filler, disintegrant, method;
     
-    const totalWeight = api.dose < 100 ? 150 : api.dose + 150;
-    const rem = totalWeight - api.dose;
+    if(strategy === "quality") {
+        qualityScore = 98; costScore = 40;
+        filler = "Avicel PH-102 (Premium)";
+        disintegrant = "Ac-Di-Sol (Super)";
+        method = "الكبس المباشر (Direct Compression)";
+    } else if(strategy === "balanced") {
+        qualityScore = 85; costScore = 70;
+        filler = "Lactose Monohydrate";
+        disintegrant = "Primojel";
+        method = "التحبيب الرطب (Wet Granulation)";
+    } else {
+        qualityScore = 65; costScore = 95;
+        filler = "Native Starch";
+        disintegrant = "Maize Starch";
+        method = "التحبيب الجاف (Dry Granulation)";
+    }
 
+    const totalWeight = api.dose + 150;
     const formula = [
-        { name: apiName, role: "Active API", qty: api.dose, cost: (api.dose * api.cost / 1e6) },
-        { name: filler.name, role: filler.role, qty: rem * 0.85, cost: (rem * 0.85 * filler.cost / 1e6) },
-        { name: dis.name, role: dis.role, qty: rem * 0.10, cost: (rem * 0.10 * dis.cost / 1e6) },
-        { name: excipients.lubricants.name, role: excipients.lubricants.role, qty: rem * 0.05, cost: (rem * 0.05 * excipients.lubricants.cost / 1e6) }
+        { name: document.getElementById('apiSelect').value, qty: api.dose, cost: (api.dose * api.cost / 1000) },
+        { name: filler, qty: 120, cost: 2.5 },
+        { name: disintegrant, qty: 20, cost: 4.0 },
+        { name: "Magnesium Stearate", qty: 10, cost: 1.2 }
     ];
 
-    document.getElementById('resultsArea').style.display = 'block';
-    document.getElementById('formulaBody').innerHTML = formula.map(item => `
-        <tr>
-            <td><b>${item.name}</b></td>
-            <td>${item.role}</td>
-            <td>${item.qty.toFixed(1)}</td>
-            <td>${((item.qty/totalWeight)*100).toFixed(1)}%</td>
-            <td>$${(item.cost * batchSize).toFixed(2)}</td>
-        </tr>
+    // عرض النتائج
+    document.getElementById('resultsArea').style.display = 'grid';
+    document.getElementById('qualityBar').style.width = qualityScore + '%';
+    document.getElementById('costBar').style.width = costScore + '%';
+
+    document.getElementById('formulaTable').innerHTML = formula.map(f => `
+        <tr><td>${f.name}</td><td>${f.qty}</td><td>${((f.qty/totalWeight)*100).toFixed(1)}%</td><td>$${(f.cost * batch / 100).toFixed(2)}</td></tr>
     `).join('');
 
-    const eff = strategy === "quality" ? 98 : 85;
-    document.getElementById('efficiencyWrapper').innerHTML = `
-        <div style="text-align:center">
-            <h3>Q1/Q2 Assessment: ${eff}%</h3>
-            <p style="font-size:0.9em; color:#666">Empirical Projection: 40% Reduction in Trial & Error Phase</p>
-            <div class="progress-bar"><div class="progress-fill" style="width:${eff}%"></div></div>
-        </div>
+    document.getElementById('techBox').innerHTML = `
+        <b>🚛 بيانات الإنتاج:</b><br>
+        • طريقة التصنيع: ${method}<br>
+        • وزن الوحدة: ${totalWeight} mg<br>
+        • إنتاجية التشغيلة: ${(totalWeight * batch / 1000).toFixed(2)} جرام
     `;
 
-    renderChart(formula);
+    document.getElementById('storageBox').innerHTML = `
+        <b>🌡️ توصيات الحفظ والتغليف:</b><br>
+        • درجة الحرارة: تحت 25°C<br>
+        • الرطوبة: < 60% (RH)<br>
+        • التغليف: Blister Pack (Alu-PVC)
+    `;
+
+    updateChart(formula);
 }
 
-function renderChart(formula) {
+function updateChart(formula) {
     const ctx = document.getElementById('formulaChart').getContext('2d');
-    if(formulaChart) formulaChart.destroy();
-    formulaChart = new Chart(ctx, {
-        type: 'doughnut',
+    if(myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
+        type: 'pie',
         data: {
             labels: formula.map(f => f.name),
-            datasets: [{ data: formula.map(f => f.qty), backgroundColor: ['#0e4b62','#3498db','#2ecc71','#e74c3c'] }]
-        },
-        options: { maintainAspectRatio: false }
+            datasets: [{ data: formula.map(f => f.qty), backgroundColor: ['#0e4b62', '#3498db', '#27ae60', '#f1c40f'] }]
+        }
     });
 }
 
-function generatePDF() {
+function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text("BakChemformula Scientific Report", 10, 10);
-    doc.autoTable({ html: 'table', startY: 20 });
+    const barcodeVal = "BAK-" + Math.floor(Math.random()*90000);
     
-    // Barcode Generation
-    const canvas = document.getElementById("barcodeCanvas");
-    JsBarcode(canvas, "BK-" + Math.floor(Math.random()*10000));
-    doc.addImage(canvas.toDataURL("image/png"), 'PNG', 150, 250, 40, 15);
+    // العلامة المائية
+    doc.setTextColor(240);
+    doc.setFontSize(50);
+    doc.text("CONFIDENTIAL", 40, 150, { angle: 45 });
     
-    doc.save("BakChem_Report.pdf");
+    doc.setTextColor(0);
+    doc.setFontSize(20);
+    doc.text("BakChemformula Technical Report", 10, 20);
+    
+    doc.autoTable({ html: 'table', startY: 30 });
+    
+    // الباركود
+    JsBarcode("#barcode", barcodeVal);
+    const canvas = document.getElementById("barcode");
+    doc.addImage(canvas.toDataURL("image/png"), 'PNG', 150, 260, 40, 15);
+    
+    doc.save(`BakChem_Report_${barcodeVal}.pdf`);
 }
 </script>
 </body>
