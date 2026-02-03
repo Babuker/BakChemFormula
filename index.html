@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BakChemformula | Pharmaceutical Expert System</title>
+    <title>BakChemformula | Advanced Simulation v6.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -16,11 +16,12 @@
         .section-box { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 25px; border: 1px solid #e2e8f0; }
         .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
         .lang-toggle { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
-        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
-        .btn-run { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
-        .btn-run:hover { opacity: 0.9; }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 0.9em; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+        input:focus { border-color: var(--secondary); outline: none; box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
+        .btn-run { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.3s; }
+        .btn-run:hover { background: #083648; }
         .efficiency-container { margin-bottom: 15px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #edf2f7; }
         .q-label-flex { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         .bar-bg { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
@@ -44,7 +45,8 @@
             <button class="lang-toggle" onclick="toggleLang()" id="langBtn">English Interface</button>
         </div>
         <div class="input-grid">
-            <div><label id="l_api">المادة الفعالة:</label><select id="apiSelect"></select></div>
+            <div><label id="l_api">المادة الفعالة:</label><select id="apiSelect" onchange="updateDefaultDose()"></select></div>
+            <div><label id="l_dose">الجرعة (mg):</label><input type="number" id="apiDose" value="500"></div>
             <div><label id="l_batch">حجم التشغيلة:</label><input type="number" id="batchSize" value="10000"></div>
             <div><label id="l_strat">إستراتيجية التصنيع:</label>
                 <select id="strategy">
@@ -115,20 +117,27 @@ const excipients = [
 
 const dictionary = {
     ar: {
-        t_h1: "1. مدخلات النظام الخبير - BakChemformula", t_h2: "2. تحليل الصيغة ومعايير الكفاءة", l_api: "المادة الفعالة:", l_batch: "حجم التشغيلة:",
+        t_h1: "1. مدخلات النظام الخبير - BakChemformula", t_h2: "2. تحليل الصيغة ومعايير الكفاءة", l_api: "المادة الفعالة:", l_dose: "الجرعة (mg):", l_batch: "حجم التشغيلة:",
         l_strat: "إستراتيجية التصنيع:", opt_q: "جودة فائقة", opt_h: "التوازن", opt_c: "اقتصادية", t_btn_run: "تحليل ومحاكاة التركيبة",
         t_q_label: "مؤشر كفاءة الاستراتيجية:", t_compare_title: "مقارنة التكاليف ($)", t_h_prod: "البيانات الفنية للتشغيلة:",
         t_h_risk: "تحليل المخاطر والتوصيات:", t_btn_pdf: "تصدير التقرير الفني PDF", th: ["المادة", "الوظيفة", "(mg)", "%", "التكلفة"],
-        btn: "English Interface", weight: "الوزن الكلي:", cost: "تكلفة التشغيلة:", report_title: "BakChemformula تقرير فني"
+        btn: "English Interface", weight: "الوزن الكلي للقرص:", cost: "إجمالي تكلفة التشغيلة:", report_title: "BakChemformula تقرير فني"
     },
     en: {
-        t_h1: "1. Expert System Inputs - BakChemformula", t_h2: "2. Formula Analysis & Efficiency", l_api: "Active API:", l_batch: "Batch Size:",
+        t_h1: "1. Expert System Inputs - BakChemformula", t_h2: "2. Formula Analysis & Efficiency", l_api: "Active API:", l_dose: "Dose (mg):", l_batch: "Batch Size:",
         l_strat: "Mfg Strategy:", opt_q: "High Quality", opt_h: "Balanced", opt_c: "Economy", t_btn_run: "Run Simulation",
         t_q_label: "Efficiency Index:", t_compare_title: "Cost Comparison ($)", t_h_prod: "Production Details:",
         t_h_risk: "Risk Analysis & Recommendations:", t_btn_pdf: "Export Technical PDF", th: ["Material", "Role", "(mg)", "%", "Cost"],
-        btn: "الواجهة العربية", weight: "Total Weight:", cost: "Batch Cost:", report_title: "BakChemformula Technical Report"
+        btn: "الواجهة العربية", weight: "Total Tablet Weight:", cost: "Total Batch Cost:", report_title: "BakChemformula Technical Report"
     }
 };
+
+function updateDefaultDose() {
+    const apiID = document.getElementById('apiSelect').value;
+    if (db[apiID]) {
+        document.getElementById('apiDose').value = db[apiID].dose;
+    }
+}
 
 function toggleLang() {
     currentLang = currentLang === 'ar' ? 'en' : 'ar';
@@ -149,11 +158,12 @@ function populateSelect() {
     if(prevVal) s.value = prevVal;
 }
 
-window.onload = populateSelect;
+window.onload = () => { populateSelect(); updateDefaultDose(); };
 
 function runAnalysis() {
     const apiID = document.getElementById('apiSelect').value;
     const api = db[apiID];
+    const userDose = parseFloat(document.getElementById('apiDose').value) || api.dose;
     const batch = parseFloat(document.getElementById('batchSize').value) || 0;
     const strat = document.getElementById('strategy').value;
     document.getElementById('resultsArea').style.display = 'block';
@@ -164,23 +174,25 @@ function runAnalysis() {
 
     let factor = strat === 'quality' ? 0.3 : (strat === 'hybrid' ? 0.2 : 0.1);
     const formula = [
-        { name: api[currentLang], role: currentLang === 'ar'?'مادة فعالة':'Active API', qty: api.dose, p_kg: api.p_kg, color: api.color },
-        ...excipients.map(ex => ({ name: ex[currentLang], role: ex[`role_${currentLang}`], qty: Math.round(api.dose * factor), p_kg: ex.p_kg, color: ex.color }))
+        { name: api[currentLang], role: currentLang === 'ar'?'مادة فعالة':'Active API', qty: userDose, p_kg: api.p_kg, color: api.color },
+        ...excipients.map(ex => ({ name: ex[currentLang], role: ex[`role_${currentLang}`], qty: Math.round(userDose * factor), p_kg: ex.p_kg, color: ex.color }))
     ];
 
     let totalC = 0; let totalW = 0;
+    formula.forEach(f => { totalW += f.qty; });
+
     document.getElementById('formulaBody').innerHTML = formula.map(f => {
         let costNum = (f.qty * f.p_kg * batch / 1000000);
-        totalC += costNum; totalW += f.qty;
-        return `<tr><td>${f.name}</td><td>${f.role}</td><td>${f.qty}</td><td>${((f.qty/(api.dose*(1+factor*3)))*100).toFixed(1)}%</td><td>$${costNum.toFixed(2)}</td></tr>`;
+        totalC += costNum;
+        return `<tr><td>${f.name}</td><td>${f.role}</td><td>${f.qty}</td><td>${((f.qty/totalW)*100).toFixed(1)}%</td><td>$${costNum.toFixed(2)}</td></tr>`;
     }).join('');
 
-    renderCharts(formula, api, batch);
+    renderCharts(formula, api, batch, userDose);
     document.getElementById('prodContent').innerHTML = `• ${dictionary[currentLang].weight} ${totalW} mg<br>• ${dictionary[currentLang].cost} <b>$${totalC.toFixed(2)}</b>`;
     document.getElementById('riskContent').innerHTML = `⚠️ ${api[`risk_${currentLang}`]}`;
 }
 
-function renderCharts(formula, api, batch) {
+function renderCharts(formula, api, batch, userDose) {
     if(donutChart) donutChart.destroy();
     donutChart = new Chart(document.getElementById('myChart'), {
         type: 'doughnut',
@@ -189,7 +201,7 @@ function renderCharts(formula, api, batch) {
     });
     document.getElementById('chartLegend').innerHTML = formula.map(f=>`<div><span style="color:${f.color}">■</span> ${f.name}</div>`).join('');
 
-    const baseCost = (api.dose * api.p_kg * batch / 1000000);
+    const baseCost = (userDose * api.p_kg * batch / 1000000);
     if(barChart) barChart.destroy();
     barChart = new Chart(document.getElementById('compareChart'), {
         type: 'bar',
@@ -201,25 +213,17 @@ function renderCharts(formula, api, batch) {
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
-    // التقرير سيتم تصديره باللغة الإنجليزية حصرياً لضمان عدم تلف النصوص وتوافقها مع محركات الـ PDF العالمية
     const d = dictionary['en'];
     doc.setFontSize(18); doc.setTextColor(14, 75, 98);
     doc.text(d.report_title, 105, 20, {align:"center"});
-    
-    doc.autoTable({ 
-        html: '#formulaTable', startY: 30, theme: 'grid', headStyles: {fillColor:[14, 75, 98]},
-        didParseCell: function(data) { if(data.section === 'body' && data.column.index === 4) data.cell.text = data.cell.text; }
-    });
-    
+    doc.autoTable({ html: '#formulaTable', startY: 30, theme: 'grid', headStyles: {fillColor:[14, 75, 98]} });
     let fY = doc.lastAutoTable.finalY + 15;
     doc.setFontSize(12); doc.text("Analysis Summary:", 15, fY);
     doc.setFontSize(10); doc.setTextColor(0);
     doc.text(document.getElementById('prodContent').innerText.replace(/•/g,'-').replace(/<br>/g,'\n'), 15, fY + 10);
-    
-    JsBarcode("#barcode", "BCF-2026-FINAL");
+    JsBarcode("#barcode", "BCF-V6-CUSTOM");
     doc.addImage(document.getElementById("barcode").toDataURL(), 'PNG', 160, 280, 40, 10);
-    doc.save("BakChemformula_Report.pdf");
+    doc.save("BakChemformula_Custom_Report.pdf");
 }
 </script>
 </body>
