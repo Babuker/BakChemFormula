@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="mainTag">
 <head>
     <meta charset="UTF-8">
     <title>BakChemformula | Professional Suite</title>
@@ -8,190 +8,220 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
-        :root { --primary: #0e4b62; --secondary: #3498db; --accent: #27ae60; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 25px; padding-bottom: 10px; }
-        .input-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; background: #f1f4f6; padding: 20px; border-radius: 10px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; color: var(--primary); }
-        select, input, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; margin-bottom: 10px; }
-        .btn-run { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; font-size: 18px; }
-        .btn-run:hover { background: #083242; }
+        :root { --primary: #0e4b62; --secondary: #3498db; --accent: #27ae60; --bg: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; transition: 0.3s; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); position: relative; }
         
-        /* شريط الجودة والتكلفة */
-        .status-card { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 10px; }
-        .progress-container { background: #eee; height: 15px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; transition: 1s ease-in-out; }
-        .quality-fill { background: var(--accent); }
-        .cost-fill { background: #e67e22; }
+        /* زر تبديل اللغة */
+        .lang-switch { position: absolute; top: 20px; left: 20px; background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 30px; }
+        .input-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; background: #ebf0f2; padding: 25px; border-radius: 12px; }
+        
+        /* فقرة التركيبة الرئيسية */
+        .formula-main-section { margin-top: 30px; display: none; }
+        .formula-title { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px 8px 0 0; margin: 0; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background: #f8f9fa; color: var(--primary); }
 
-        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; display: none; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: var(--primary); color: white; }
-        .recommendation-box { background: #e8f4fd; padding: 15px; border-right: 5px solid var(--secondary); border-radius: 5px; margin-top: 15px; }
-        canvas { max-width: 100%; height: 250px !important; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .info-card { background: #fff; border-right: 5px solid var(--secondary); padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        /* شريط المؤشرات */
+        .progress-container { background: #eee; height: 12px; border-radius: 10px; margin: 8px 0; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; transition: 1.2s cubic-bezier(0.1, 0.7, 1.0, 0.1); }
+        
+        .legal-footer { margin-top: 50px; text-align: center; font-size: 0.85em; color: #777; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn-action { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1.1em; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <button class="lang-switch" onclick="toggleLang()" id="langBtn">English</button>
+    
     <div class="header">
-        <h1>BakChemformula <span style="font-size: 0.4em; vertical-align: middle;">Expert System v2.5</span></h1>
-        <p>النظام الخبير لتصميم وتحليل الصيغ الصيدلانية والمطابقة المعيارية</p>
+        <h1 id="h_title">BakChemformula | النظام الخبير</h1>
+        <p id="h_subtitle">التصميم الرقمي والمطابقة المعيارية للصناعات الصيدلانية</p>
     </div>
 
     <div class="input-section">
         <div>
-            <label>المادة الفعالة (API):</label>
+            <label id="l_api">المادة الفعالة (API):</label>
             <select id="apiSelect">
-                <option value="Paracetamol">Paracetamol (Analgesic)</option>
-                <option value="Diclofenac">Diclofenac (Acid Sensitive)</option>
-                <option value="Metronidazole">Metronidazole (Bitter/Moisture)</option>
+                <option value="Paracetamol">Paracetamol (USP)</option>
+                <option value="Diclofenac">Diclofenac Sodium</option>
+                <option value="Metronidazole">Metronidazole (BP)</option>
             </select>
-            <label>حجم التشغيلة (Batch Units):</label>
+            <label id="l_batch">حجم التشغيلة (Batch Units):</label>
             <input type="number" id="batchSize" value="1000">
         </div>
         <div>
-            <label>إستراتيجية التصنيع:</label>
+            <label id="l_strat">استراتيجية التحسين:</label>
             <select id="strategy">
-                <option value="quality">جودة عالية (Q1/Q2 Compliance)</option>
-                <option value="balanced">متوازن (Performance & Cost)</option>
-                <option value="cost">تكلفة اقتصادية (Budget Friendly)</option>
+                <option value="quality" id="opt_q">جودة عالية (Q1/Q2 Compliance)</option>
+                <option value="balanced" id="opt_b">متوازن (Balanced)</option>
+                <option value="cost" id="opt_c">تكلفة اقتصادية (Cost-Effective)</option>
             </select>
-            <button class="btn-run" onclick="calculateBakChem()">تحليل واعتماد الصيغة</button>
+            <button class="btn-action" style="background: var(--primary);" onclick="runSystem()" id="btn_run">تحليل واعتماد الصيغة</button>
         </div>
     </div>
 
-    <div id="resultsArea" class="results-grid">
-        <div class="right-panel">
-            <div class="status-card">
-                <label>مؤشر مطابقة الجودة (Quality Index):</label>
-                <div class="progress-container"><div id="qualityBar" class="progress-fill quality-fill"></div></div>
-                
-                <label>مقارنة التكلفة (Cost Optimization):</label>
-                <div class="progress-container"><div id="costBar" class="progress-fill cost-fill"></div></div>
+    <div id="resultsArea" class="formula-main-section">
+        <h3 class="formula-title" id="h_formula">التركيبة الصيدلانية المقترحة (Proposed Formulation)</h3>
+        <table>
+            <thead>
+                <tr id="t_head">
+                    <th>المادة</th><th>الوظيفة</th><th>(mg) الوزن</th><th>النسبة %</th><th>التكلفة للتشغيلة</th>
+                </tr>
+            </thead>
+            <tbody id="formulaBody"></tbody>
+        </table>
+
+        <div class="details-grid">
+            <div class="info-card">
+                <h4 id="h_batch_details">تفاصيل التشغيلة الإنتاجية:</h4>
+                <div id="prodData"></div>
+                <div style="margin-top:10px;">
+                    <span id="l_qi">مؤشر الجودة:</span>
+                    <div class="progress-container"><div id="qBar" class="progress-fill" style="background:var(--accent)"></div></div>
+                </div>
             </div>
-
-            <table>
-                <thead><tr><th>المادة</th><th>(mg)</th><th>النسبة</th><th>التكلفة</th></tr></thead>
-                <tbody id="formulaTable"></tbody>
-            </table>
+            <div class="info-card" style="border-color: #e67e22;">
+                <h4 id="h_storage">توصيات البيئة والتخزين:</h4>
+                <div id="storageData"></div>
+                <canvas id="myChart" style="margin-top:10px"></canvas>
+            </div>
         </div>
+        
+        <button class="btn-action" style="margin-top:20px" onclick="exportPDF()" id="btn_pdf">تصدير التقرير الفني PDF</button>
+    </div>
 
-        <div class="left-panel">
-            <div class="recommendation-box" id="techBox"></div>
-            <div class="recommendation-box" style="background:#fdf2e9; border-color:#e67e22" id="storageBox"></div>
-            <canvas id="formulaChart"></canvas>
-            <button class="btn-run" style="background:var(--accent); margin-top:10px;" onclick="exportPDF()">تصدير التقرير الفني المعتمد (PDF)</button>
-        </div>
+    <div class="legal-footer">
+        <p>© 2026 BakChemformula System | All Rights Reserved. </p>
+        <p>Registered Property ID: BK-USP-2026-X1 | مصنف كـ "نظام خبير لتطوير الدواء"</p>
     </div>
 </div>
 
 <canvas id="barcode" style="display:none"></canvas>
 
 <script>
-const db = {
-    "Paracetamol": { dose: 500, cost: 14.5, solubility: "Low", sensitivity: "None" },
-    "Diclofenac": { dose: 50, cost: 82.0, solubility: "Low", sensitivity: "Acid" },
-    "Metronidazole": { dose: 500, cost: 38.0, solubility: "Medium", sensitivity: "Moisture" }
+let currentLang = 'ar';
+const i18n = {
+    ar: {
+        h_title: "BakChemformula | النظام الخبير", h_subtitle: "التصميم الرقمي والمطابقة المعيارية للصناعات الصيدلانية",
+        l_api: "المادة الفعالة (API):", l_batch: "حجم التشغيلة (وحدة):", l_strat: "استراتيجية التحسين:",
+        opt_q: "جودة عالية (Q1/Q2)", opt_b: "متوازن", opt_c: "تكلفة اقتصادية",
+        btn_run: "تحليل واعتماد الصيغة", h_formula: "التركيبة الصيدلانية المقترحة (Proposed Formulation)",
+        t_h: ["المادة", "الوظيفة", "الوزن (mg)", "النسبة %", "تكلفة التشغيلة"],
+        h_batch_details: "تفاصيل التشغيلة الإنتاجية:", h_storage: "توصيات البيئة والتخزين:",
+        btn_pdf: "تصدير التقرير الفني PDF", l_qi: "مؤشر الجودة:"
+    },
+    en: {
+        h_title: "BakChemformula | Expert System", h_subtitle: "Digital Design & Regulatory Compliance for Pharma",
+        l_api: "Active Ingredient (API):", l_batch: "Batch Size (Units):", l_strat: "Optimization Strategy:",
+        opt_q: "High Quality (Q1/Q2)", opt_b: "Balanced", opt_c: "Cost-Effective",
+        btn_run: "Analyze & Validate Formula", h_formula: "Proposed Pharmaceutical Formulation",
+        t_h: ["Material", "Role", "Weight (mg)", "Percentage %", "Batch Cost"],
+        h_batch_details: "Production Batch Details:", h_storage: "Storage & Env. Recommendations:",
+        btn_pdf: "Export Technical PDF Report", l_qi: "Quality Index:"
+    }
 };
 
-let myChart = null;
+const apiDb = {
+    "Paracetamol": { dose: 500, cost: 14.5, solubility: "Low", process: "Direct Compression" },
+    "Diclofenac": { dose: 50, cost: 82.0, solubility: "Low", process: "Wet Granulation" },
+    "Metronidazole": { dose: 500, cost: 38.0, solubility: "Med", process: "Direct Compression" }
+};
 
-function calculateBakChem() {
-    const api = db[document.getElementById('apiSelect').value];
-    const strategy = document.getElementById('strategy').value;
-    const batch = parseInt(document.getElementById('batchSize').value);
+let chartInstance = null;
 
-    // منطق الاستراتيجيات
-    let qualityScore, costScore, filler, disintegrant, method;
+function toggleLang() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    document.getElementById('mainTag').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('langBtn').innerText = currentLang === 'ar' ? 'English' : 'العربية';
     
-    if(strategy === "quality") {
-        qualityScore = 98; costScore = 40;
-        filler = "Avicel PH-102 (Premium)";
-        disintegrant = "Ac-Di-Sol (Super)";
-        method = "الكبس المباشر (Direct Compression)";
-    } else if(strategy === "balanced") {
-        qualityScore = 85; costScore = 70;
-        filler = "Lactose Monohydrate";
-        disintegrant = "Primojel";
-        method = "التحبيب الرطب (Wet Granulation)";
-    } else {
-        qualityScore = 65; costScore = 95;
-        filler = "Native Starch";
-        disintegrant = "Maize Starch";
-        method = "التحبيب الجاف (Dry Granulation)";
+    // Update Text
+    const t = i18n[currentLang];
+    for (let id in t) {
+        if (id === 't_h') {
+            const cells = document.querySelectorAll('#t_head th');
+            t.t_h.forEach((txt, i) => cells[i].innerText = txt);
+        } else if (document.getElementById(id)) {
+            document.getElementById(id).innerText = t[id];
+        }
     }
-
-    const totalWeight = api.dose + 150;
-    const formula = [
-        { name: document.getElementById('apiSelect').value, qty: api.dose, cost: (api.dose * api.cost / 1000) },
-        { name: filler, qty: 120, cost: 2.5 },
-        { name: disintegrant, qty: 20, cost: 4.0 },
-        { name: "Magnesium Stearate", qty: 10, cost: 1.2 }
-    ];
-
-    // عرض النتائج
-    document.getElementById('resultsArea').style.display = 'grid';
-    document.getElementById('qualityBar').style.width = qualityScore + '%';
-    document.getElementById('costBar').style.width = costScore + '%';
-
-    document.getElementById('formulaTable').innerHTML = formula.map(f => `
-        <tr><td>${f.name}</td><td>${f.qty}</td><td>${((f.qty/totalWeight)*100).toFixed(1)}%</td><td>$${(f.cost * batch / 100).toFixed(2)}</td></tr>
-    `).join('');
-
-    document.getElementById('techBox').innerHTML = `
-        <b>🚛 بيانات الإنتاج:</b><br>
-        • طريقة التصنيع: ${method}<br>
-        • وزن الوحدة: ${totalWeight} mg<br>
-        • إنتاجية التشغيلة: ${(totalWeight * batch / 1000).toFixed(2)} جرام
-    `;
-
-    document.getElementById('storageBox').innerHTML = `
-        <b>🌡️ توصيات الحفظ والتغليف:</b><br>
-        • درجة الحرارة: تحت 25°C<br>
-        • الرطوبة: < 60% (RH)<br>
-        • التغليف: Blister Pack (Alu-PVC)
-    `;
-
-    updateChart(formula);
 }
 
-function updateChart(formula) {
-    const ctx = document.getElementById('formulaChart').getContext('2d');
-    if(myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'pie',
+function runSystem() {
+    const api = apiDb[document.getElementById('apiSelect').value];
+    const batch = parseInt(document.getElementById('batchSize').value);
+    const strat = document.getElementById('strategy').value;
+
+    let qScore = strat === 'quality' ? 98 : (strat === 'balanced' ? 85 : 65);
+    let filler = strat === 'quality' ? "Avicel PH-102" : "Lactose Monohydrate";
+    
+    const formula = [
+        { name: document.getElementById('apiSelect').value, role: "API", qty: api.dose, cost: (api.dose * api.cost / 1000) },
+        { name: filler, role: "Filler", qty: 120, cost: 2.2 },
+        { name: "Croscarmellose", role: "Disintegrant", qty: 25, cost: 5.5 },
+        { name: "Mag. Stearate", role: "Lubricant", qty: 5, cost: 1.2 }
+    ];
+
+    let totalBatchCost = 0;
+    document.getElementById('formulaBody').innerHTML = formula.map(f => {
+        let itemCost = (f.cost * batch / 100).toFixed(2);
+        totalBatchCost += parseFloat(itemCost);
+        return `<tr><td>${f.name}</td><td>${f.role}</td><td>${f.qty}</td><td>${((f.qty/(api.dose+150))*100).toFixed(1)}%</td><td>$${itemCost}</td></tr>`;
+    }).join('');
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('qBar').style.width = qScore + '%';
+
+    document.getElementById('prodData').innerHTML = `
+        • ${currentLang==='ar'?'طريقة التصنيع':'Process'}: ${api.process}<br>
+        • ${currentLang==='ar'?'إجمالي وزن التشغيلة':'Batch Net Weight'}: ${( (api.dose+150)*batch / 1000 ).toFixed(2)} g<br>
+        • <b style="color:var(--primary)">${currentLang==='ar'?'إجمالي تكلفة التشغيلة':'Total Batch Cost'}: $${totalBatchCost.toFixed(2)}</b>
+    `;
+
+    document.getElementById('storageData').innerHTML = `
+        • Temp: < 25°C | RH: < 60%<br>
+        • Packaging: Alu-Alu Blister Pack
+    `;
+
+    renderChart(formula);
+}
+
+function renderChart(data) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    if(chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+        type: 'doughnut',
         data: {
-            labels: formula.map(f => f.name),
-            datasets: [{ data: formula.map(f => f.qty), backgroundColor: ['#0e4b62', '#3498db', '#27ae60', '#f1c40f'] }]
-        }
+            labels: data.map(f => f.name),
+            datasets: [{ data: data.map(f => f.qty), backgroundColor: ['#0e4b62', '#3498db', '#27ae60', '#f1c40f'] }]
+        },
+        options: { maintainAspectRatio: false }
     });
 }
 
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const barcodeVal = "BAK-" + Math.floor(Math.random()*90000);
-    
-    // العلامة المائية
-    doc.setTextColor(240);
-    doc.setFontSize(50);
-    doc.text("CONFIDENTIAL", 40, 150, { angle: 45 });
-    
-    doc.setTextColor(0);
     doc.setFontSize(20);
-    doc.text("BakChemformula Technical Report", 10, 20);
-    
+    doc.text("BakChemformula Tech Report", 10, 20);
     doc.autoTable({ html: 'table', startY: 30 });
     
-    // الباركود
-    JsBarcode("#barcode", barcodeVal);
+    // Watermark
+    doc.setTextColor(230);
+    doc.text("OFFICIAL REGISTERED FORMULA", 40, 150, { angle: 45 });
+
+    JsBarcode("#barcode", "BK-2026-OK");
     const canvas = document.getElementById("barcode");
     doc.addImage(canvas.toDataURL("image/png"), 'PNG', 150, 260, 40, 15);
-    
-    doc.save(`BakChem_Report_${barcodeVal}.pdf`);
+    doc.save("BakChem_Report.pdf");
 }
 </script>
 </body>
