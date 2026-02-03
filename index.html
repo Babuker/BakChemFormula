@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BakChemformula | Expert System v5.7</title>
+    <title>BakChemformula | Pharmaceutical Expert System</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -19,16 +19,17 @@
         .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
-        .btn-run { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
+        .btn-run { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
+        .btn-run:hover { opacity: 0.9; }
         .efficiency-container { margin-bottom: 15px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #edf2f7; }
         .q-label-flex { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         .bar-bg { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--secondary), var(--accent)); transition: 1s; }
+        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--secondary), var(--accent)); transition: 1s ease-in-out; }
         .analysis-flex { display: flex; gap: 25px; flex-wrap: wrap; }
         .table-side { flex: 2; min-width: 400px; }
         .chart-side { flex: 1; min-width: 280px; background: #f8fafc; padding: 15px; border-radius: 12px; text-align: center; }
         .card { padding: 20px; border-radius: 10px; background: #fff; border: 1px solid #eee; border-right: 6px solid var(--secondary); margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; border-collapse: collapse; background: white; }
         th { background: #f1f5f9; color: var(--primary); padding: 12px; border: 1px solid #e2e8f0; }
         td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; }
         #resultsArea { display: none; }
@@ -39,7 +40,7 @@
 <div class="grid-layout">
     <div class="section-box">
         <div class="header-controls">
-            <h2 id="t_h1">1. مدخلات النظام الخبير</h2>
+            <h2 id="t_h1">1. مدخلات النظام الخبير - BakChemformula</h2>
             <button class="lang-toggle" onclick="toggleLang()" id="langBtn">English Interface</button>
         </div>
         <div class="input-grid">
@@ -89,7 +90,7 @@
         </div>
 
         <div style="text-align:center; padding:20px;">
-            <button class="btn-run" style="background:var(--accent); max-width:320px" onclick="exportPDF()" id="t_btn_pdf">تصدير التقرير PDF</button>
+            <button class="btn-run" style="background:var(--accent); max-width:320px" onclick="exportPDF()" id="t_btn_pdf">تصدير التقرير الفني PDF</button>
         </div>
     </div>
 </div>
@@ -101,30 +102,31 @@ let currentLang = 'ar';
 let donutChart = null, barChart = null;
 
 const db = {
-    "Paracetamol": { ar: "باراسيتامول", en: "Paracetamol", p_kg: 14.8, risk_ar: "مراقبة الانسيابية. تخزين أقل من 25 درجة.", risk_en: "Monitor flowability. Store < 25°C.", color: "#0e4b62" },
-    "Aspirin": { ar: "أسبرين", en: "Aspirin", p_kg: 9.5, risk_ar: "خطر التحلل المائي. رطوبة أقل من 30%.", risk_en: "Hydrolysis risk. Humidity < 30%.", color: "#16a085" },
-    "Atorvastatin": { ar: "أتورفاستاتين", en: "Atorvastatin", p_kg: 440.0, risk_ar: "حساس للأكسجين. تفريغ نيتروجين.", risk_en: "Oxygen sensitive. Nitrogen flush.", color: "#f39c12" }
+    "Paracetamol": { ar: "باراسيتامول", en: "Paracetamol", p_kg: 14.8, dose: 500, risk_ar: "مراقبة الانسيابية. تخزين أقل من 25 درجة.", risk_en: "Monitor flowability. Store < 25°C.", color: "#0e4b62" },
+    "Aspirin": { ar: "أسبرين", en: "Aspirin", p_kg: 9.5, dose: 100, risk_ar: "خطر التحلل المائي. رطوبة أقل من 30%.", risk_en: "Hydrolysis risk. Humidity < 30%.", color: "#16a085" },
+    "Atorvastatin": { ar: "أتورفاستاتين", en: "Atorvastatin", p_kg: 440.0, dose: 20, risk_ar: "حساس للأكسجين. تفريغ نيتروجين.", risk_en: "Oxygen sensitive. Nitrogen flush.", color: "#f39c12" }
 };
 
 const excipients = [
     { ar: "أفيسيل PH-102", en: "Avicel PH-102", role_ar: "مادة مالئة", role_en: "Filler", p_kg: 5.5, color: "#3498db" },
-    { ar: "إم جي ستيرات", en: "Mg Stearate", role_ar: "مادة مزلقة", role_en: "Lubricant", p_kg: 15.0, color: "#f1c40f" }
+    { ar: "إم جي ستيرات", en: "Mg Stearate", role_ar: "مادة مزلقة", role_en: "Lubricant", p_kg: 15.0, color: "#f1c40f" },
+    { ar: "أك-دي-سول", en: "Ac-Di-Sol", role_ar: "مادة مفككة", role_en: "Disintegrant", p_kg: 22.0, color: "#2ecc71" }
 ];
 
 const dictionary = {
     ar: {
-        t_h1: "1. مدخلات النظام الخبير", t_h2: "2. تحليل الصيغة ومعايير الكفاءة", l_api: "المادة الفعالة:", l_batch: "حجم التشغيلة:",
+        t_h1: "1. مدخلات النظام الخبير - BakChemformula", t_h2: "2. تحليل الصيغة ومعايير الكفاءة", l_api: "المادة الفعالة:", l_batch: "حجم التشغيلة:",
         l_strat: "إستراتيجية التصنيع:", opt_q: "جودة فائقة", opt_h: "التوازن", opt_c: "اقتصادية", t_btn_run: "تحليل ومحاكاة التركيبة",
         t_q_label: "مؤشر كفاءة الاستراتيجية:", t_compare_title: "مقارنة التكاليف ($)", t_h_prod: "البيانات الفنية للتشغيلة:",
-        t_h_risk: "تحليل المخاطر والتوصيات:", t_btn_pdf: "تصدير التقرير PDF", th: ["المادة", "الوظيفة", "(mg)", "%", "التكلفة"],
-        btn: "English Interface", weight: "الوزن الكلي:", cost: "تكلفة التشغيلة:", tech: "التقنية: كبس مباشر"
+        t_h_risk: "تحليل المخاطر والتوصيات:", t_btn_pdf: "تصدير التقرير الفني PDF", th: ["المادة", "الوظيفة", "(mg)", "%", "التكلفة"],
+        btn: "English Interface", weight: "الوزن الكلي:", cost: "تكلفة التشغيلة:", report_title: "BakChemformula تقرير فني"
     },
     en: {
-        t_h1: "1. Expert System Inputs", t_h2: "2. Formula Analysis & Efficiency", l_api: "Active API:", l_batch: "Batch Size:",
+        t_h1: "1. Expert System Inputs - BakChemformula", t_h2: "2. Formula Analysis & Efficiency", l_api: "Active API:", l_batch: "Batch Size:",
         l_strat: "Mfg Strategy:", opt_q: "High Quality", opt_h: "Balanced", opt_c: "Economy", t_btn_run: "Run Simulation",
         t_q_label: "Efficiency Index:", t_compare_title: "Cost Comparison ($)", t_h_prod: "Production Details:",
-        t_h_risk: "Risk Analysis & Recommendations:", t_btn_pdf: "Export PDF Report", th: ["Material", "Role", "(mg)", "%", "Cost"],
-        btn: "الواجهة العربية", weight: "Total Weight:", cost: "Batch Cost:", tech: "Tech: Direct Compression"
+        t_h_risk: "Risk Analysis & Recommendations:", t_btn_pdf: "Export Technical PDF", th: ["Material", "Role", "(mg)", "%", "Cost"],
+        btn: "الواجهة العربية", weight: "Total Weight:", cost: "Batch Cost:", report_title: "BakChemformula Technical Report"
     }
 };
 
@@ -142,9 +144,9 @@ function toggleLang() {
 
 function populateSelect() {
     const s = document.getElementById('apiSelect');
-    const val = s.value; s.innerHTML = "";
+    const prevVal = s.value; s.innerHTML = "";
     Object.keys(db).forEach(id => s.options[s.options.length] = new Option(db[id][currentLang], id));
-    if(val) s.value = val;
+    if(prevVal) s.value = prevVal;
 }
 
 window.onload = populateSelect;
@@ -152,7 +154,7 @@ window.onload = populateSelect;
 function runAnalysis() {
     const apiID = document.getElementById('apiSelect').value;
     const api = db[apiID];
-    const batch = parseInt(document.getElementById('batchSize').value);
+    const batch = parseFloat(document.getElementById('batchSize').value) || 0;
     const strat = document.getElementById('strategy').value;
     document.getElementById('resultsArea').style.display = 'block';
 
@@ -162,33 +164,36 @@ function runAnalysis() {
 
     let factor = strat === 'quality' ? 0.3 : (strat === 'hybrid' ? 0.2 : 0.1);
     const formula = [
-        { name: api[currentLang], role: currentLang === 'ar'?'فعال':'API', qty: 100, p_kg: api.p_kg, color: api.color },
-        ...excipients.map(ex => ({ name: ex[currentLang], role: ex[`role_${currentLang}`], qty: Math.round(100*factor), p_kg: ex.p_kg, color: ex.color }))
+        { name: api[currentLang], role: currentLang === 'ar'?'مادة فعالة':'Active API', qty: api.dose, p_kg: api.p_kg, color: api.color },
+        ...excipients.map(ex => ({ name: ex[currentLang], role: ex[`role_${currentLang}`], qty: Math.round(api.dose * factor), p_kg: ex.p_kg, color: ex.color }))
     ];
 
-    let totalC = 0;
+    let totalC = 0; let totalW = 0;
     document.getElementById('formulaBody').innerHTML = formula.map(f => {
-        let cost = (f.qty * f.p_kg * batch / 1000000).toFixed(2);
-        totalC += parseFloat(cost);
-        return `<tr><td>${f.name}</td><td>${f.role}</td><td>${f.qty}</td><td>${((f.qty/150)*100).toFixed(1)}%</td><td>$${cost}</td></tr>`;
+        let costNum = (f.qty * f.p_kg * batch / 1000000);
+        totalC += costNum; totalW += f.qty;
+        return `<tr><td>${f.name}</td><td>${f.role}</td><td>${f.qty}</td><td>${((f.qty/(api.dose*(1+factor*3)))*100).toFixed(1)}%</td><td>$${costNum.toFixed(2)}</td></tr>`;
     }).join('');
 
-    renderCharts(api, batch, formula);
-    document.getElementById('prodContent').innerHTML = `${dictionary[currentLang].weight} 160 mg | ${dictionary[currentLang].cost} $${totalC.toFixed(2)}`;
+    renderCharts(formula, api, batch);
+    document.getElementById('prodContent').innerHTML = `• ${dictionary[currentLang].weight} ${totalW} mg<br>• ${dictionary[currentLang].cost} <b>$${totalC.toFixed(2)}</b>`;
     document.getElementById('riskContent').innerHTML = `⚠️ ${api[`risk_${currentLang}`]}`;
 }
 
-function renderCharts(api, batch, formula) {
+function renderCharts(formula, api, batch) {
     if(donutChart) donutChart.destroy();
     donutChart = new Chart(document.getElementById('myChart'), {
         type: 'doughnut',
         data: { labels: formula.map(f=>f.name), datasets: [{ data: formula.map(f=>f.qty), backgroundColor: formula.map(f=>f.color) }] },
         options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
+    document.getElementById('chartLegend').innerHTML = formula.map(f=>`<div><span style="color:${f.color}">■</span> ${f.name}</div>`).join('');
+
+    const baseCost = (api.dose * api.p_kg * batch / 1000000);
     if(barChart) barChart.destroy();
     barChart = new Chart(document.getElementById('compareChart'), {
         type: 'bar',
-        data: { labels: ['Q', 'H', 'C'], datasets: [{ data: [150, 120, 90], backgroundColor: ['#0e4b62', '#f39c12', '#27ae60'] }] },
+        data: { labels: ['Q', 'H', 'E'], datasets: [{ data: [baseCost*1.5, baseCost*1.2, baseCost], backgroundColor: ['#0e4b62', '#f39c12', '#27ae60'] }] },
         options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 }
@@ -196,10 +201,25 @@ function renderCharts(api, batch, formula) {
 function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    // لتجنب تلف اللغة العربية في الـ PDF، سنستخدم اللغة الإنجليزية فقط في التصدير حالياً لضمان سلامة الأرقام والجداول
-    doc.text("BakChemformula Technical Report", 105, 20, {align:"center"});
-    doc.autoTable({ html: '#formulaTable', startY: 30 });
-    doc.save("Report.pdf");
+    
+    // التقرير سيتم تصديره باللغة الإنجليزية حصرياً لضمان عدم تلف النصوص وتوافقها مع محركات الـ PDF العالمية
+    const d = dictionary['en'];
+    doc.setFontSize(18); doc.setTextColor(14, 75, 98);
+    doc.text(d.report_title, 105, 20, {align:"center"});
+    
+    doc.autoTable({ 
+        html: '#formulaTable', startY: 30, theme: 'grid', headStyles: {fillColor:[14, 75, 98]},
+        didParseCell: function(data) { if(data.section === 'body' && data.column.index === 4) data.cell.text = data.cell.text; }
+    });
+    
+    let fY = doc.lastAutoTable.finalY + 15;
+    doc.setFontSize(12); doc.text("Analysis Summary:", 15, fY);
+    doc.setFontSize(10); doc.setTextColor(0);
+    doc.text(document.getElementById('prodContent').innerText.replace(/•/g,'-').replace(/<br>/g,'\n'), 15, fY + 10);
+    
+    JsBarcode("#barcode", "BCF-2026-FINAL");
+    doc.addImage(document.getElementById("barcode").toDataURL(), 'PNG', 160, 280, 40, 10);
+    doc.save("BakChemformula_Report.pdf");
 }
 </script>
 </body>
