@@ -1,16 +1,11 @@
-# 🧪 BakChemformula | Expert System Suite
-**Pharmaceutical In-silico Formulation Engine**
+💊 BakChemformula v5.6
+BakChemformula is an AI-powered expert system designed for pharmaceutical formulation development. It integrates Quality by Design (QbD) principles to simulate manufacturing risks, optimize costs through a hybrid balancing algorithm, and generate comprehensive technical reports. By linking real-time 2026 raw material pricing with structural formula analysis, it empowers pharmacists and production engineers to make data-driven decisions that enhance both product quality and manufacturing efficiency.
 
-[cite_start]النظام الخبير لتصميم وتحليل الصيغ الصيدلانية والمطابقة المعيارية (Q1/Q2 Compliance).
+BakChemformula هو نظام خبير مدعوم بالذكاء الاصطناعي مخصص لتطوير الصيغ الدوائية. يدمج النظام مبادئ الجودة عبر التصميم (QbD) لمحاكاة مخاطر التصنيع، وتحسين التكاليف من خلال خوارزمية توازن ذكية، وتوليد تقارير فنية شاملة. عبر ربط أسعار المواد الخام لعام 2026 بتحليل الهيكل البنائي للصيغة، يمنح النظام الصيادلة ومهندسي الإنتاج القدرة على اتخاذ قرارات مبنية على البيانات لتعزيز جودة المنتج وكفاءة التصنيع.
 
-## 🚀 الميزات الرئيسية
-- **Dual-Language:** واجهة كاملة بالعربية والإنجليزية.
-- [cite_start]**Visual Analytics:** محاذاة أفقية بين جداول البيانات والمخططات الدائرية لسهولة التحليل[cite: 3].
-- [cite_start]**Batch Intelligence:** حساب دقيق لتكاليف التشغيلة بناءً على حجم الإنتاج[cite: 7].
-- [cite_start]**Smart Reporting:** تصدير تقارير PDF مع باركود وعلامة مائية شاملة[cite: 10].
+🌐 Live Demo & Contact / الوصول والاتصال
+🚀 Live Demo: https://abubaker83.github.io/BakChemformula/
 
-## 🛠 التقنيات
-`JavaScript (Logic)` `Chart.js (Viz)` `jsPDF (Reporting)`
+📧 Email: babuker@protonmail.com
 
----
-**© 2026 BakChem | Registered Patent ID: BK-USP-2026-REG**
+💼 LinkedIn: Abubaker A. A.
