@@ -1,20 +1,16 @@
-🧪 BakChemformula
-In-silico Pharmaceutical Expert System
-📘 1. Technical Abstract (English)
-BakChemformula is a specialized In-silico Pharmaceutical Expert System designed to streamline the pre-formulation stage of solid dosage forms. Utilizing a Rule-Based Inference Engine, the platform integrates physicochemical API profiles with compendial excipient data to generate optimized prototypes. The system ensures Regulatory Sameness (Q1/Q2) by adhering to the FDA Inactive Ingredient Database and USP-NF monographs. By employing a Deterministic Calculation Module for mass balance, the system provides an Empirical Projection that can reduce laboratory Trial & Error cycles by approximately 40%, offering a digitalized approach to Quality by Design (QbD) in pharmaceutical manufacturing.
+# 🧪 BakChemformula | Expert System Suite
+**Pharmaceutical In-silico Formulation Engine**
 
-📗 2. الملخص الفني (باللغة العربية)
-يُعد نظام BakChemformula نظاماً خبيراً متطوراً في مجال التكنولوجيا الصيدلانية الرقمية، حيث يعمل على أتمتة تصميم الصيغ الدوائية للأشكال الصيدلانية الصلبة عبر المحاكاة الحاسوبية. يعتمد النظام على محرك استدلال قائم على القواعد لربط خصائص المادة الفعالة مع المواد المضافة المعيارية، مما يضمن تحقيق مطابقة الجودة النوعية والكمية (Q1/Q2) وفقاً لدساتير الأدوية العالمية مثل USP-NF. ومن خلال وحدة الحساب الحتمي لموازنة الكتلة، يوفر النظام إسقاطاً تجريبياً يساهم في تقليل تجارب الخطأ والصواب في المختبر بنسبة تقديرية تصل إلى 40%، مما يجعله أداة محورية في تعزيز كفاءة البحث والتطوير الصيدلاني وتوثيق التقارير الفنية رقمياً.
+[cite_start]النظام الخبير لتصميم وتحليل الصيغ الصيدلانية والمطابقة المعيارية (Q1/Q2 Compliance).
 
-🛠 Tech Stack | التقنيات المستخدمة
-Logic: JavaScript (Deterministic Rule-Based Engine).
+## 🚀 الميزات الرئيسية
+- **Dual-Language:** واجهة كاملة بالعربية والإنجليزية.
+- [cite_start]**Visual Analytics:** محاذاة أفقية بين جداول البيانات والمخططات الدائرية لسهولة التحليل[cite: 3].
+- [cite_start]**Batch Intelligence:** حساب دقيق لتكاليف التشغيلة بناءً على حجم الإنتاج[cite: 7].
+- [cite_start]**Smart Reporting:** تصدير تقارير PDF مع باركود وعلامة مائية شاملة[cite: 10].
 
-Analytics: Chart.js for data visualization.
+## 🛠 التقنيات
+`JavaScript (Logic)` `Chart.js (Viz)` `jsPDF (Reporting)`
 
-Reporting: jsPDF & JsBarcode for professional documentation.
-
-Design: Responsive HTML5 / CSS3.
-
-Developed by: [Babuker]
-
-Framework: Pharma 4.0 - Digital Transformation in Drug Design
+---
+**© 2026 BakChem | Registered Patent ID: BK-USP-2026-REG**
